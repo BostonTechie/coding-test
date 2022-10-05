@@ -1,0 +1,128 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  email     String   @unique
+  password  String
+}
+
+model Hive {
+  id                     Int            @id @unique @default(autoincrement())
+  Report_Type            String?        @map("Report Type")
+  Asset_Type             String?        @map("Asset Type")
+  Asset                  String?
+  Account                String?
+  Counterparty           String?        @default("")
+  Quantity               Float?         @db.Real
+  Basis_Date             DateTime?      @map("Basis Date")
+  Proceed_Date           DateTime?      @map("Proceed Date")
+  Token_Price            Float?         @map("Token Price") @db.Real
+  Gross_Proceed          Float?         @map("Gross Proceed") @db.Real
+  Total_Price            Float?         @map("Total Price") @db.Real
+  Price_Symbol           String?        @map("Price Symbol")
+  Basis_Price            Float?         @map("Basis Price") @db.Real
+  Cost_of_Basis          Float?         @map("Cost of Basis") @db.Real
+  Net                    Float?         @default(0) @db.Real
+  Transaction_Type       String?        @map("Transaction Type")
+  Duration               String?
+  Block                  Int?
+  Transaction_ID         String?        @map("Transaction ID")
+  Note                   String?
+  Index                  Int?
+  Account_Ownership      String?
+  CounterParty_Ownership String?
+  internal               String?
+  accountingJE           AccountingJE[]
+}
+
+model AccountingJE {
+  id           Int       @id @unique @default(autoincrement())
+  Entity       String?
+  Wallet       String?
+  Asset        String?
+  Proceed_Date DateTime?
+  Ledger_Type1 String?
+  Ledger_Type2 String?
+  Ledger_Name  String?
+  Debit        Float?    @default(0) @db.Real
+  Credit       Float?    @default(0) @db.Real
+  CryptoDBid   Int
+  Duration     String?
+  hive         Hive      @relation(fields: [CryptoDBid], references: [id])
+}
+
+model Ledger {
+  id               Int      @id @unique @default(autoincrement())
+  Transaction_Type String?  @map("Transaction Type")
+  Dledger          DLedger?
+  DLedger_SType    String?  @default("Liquid")
+  Cledger          CLedger?
+  CLedger_SType    String?  @default("Deferred Revenue")
+  Realized         Boolean? @default(false)
+  Realized_Type    String?
+  Sale             Sale?
+  Notes            String?
+}
+
+model Output {
+  id               Int       @id @unique @default(autoincrement())
+  Report_Type      String?   @map("Report Type")
+  Asset_Type       String?   @map("Asset Type")
+  Asset            String?
+  Account          String?
+  Counterparty     String?   @default("")
+  Quantity         Float?    @db.Real
+  Basis_Date       DateTime? @map("Basis Date")
+  Proceed_Date     DateTime? @map("Proceed Date")
+  Token_Price      Float?    @map("Token Price") @db.Real
+  Gross_Proceed    Float?    @map("Gross Proceed") @db.Real
+  Total_Price      Float?    @map("Total Price") @db.Real
+  Price_Symbol     String?   @map("Price Symbol")
+  Basis_Price      Float?    @map("Basis Price") @db.Real
+  Cost_of_Basis    Float?    @map("Cost of Basis") @db.Real
+  Net              Float?    @default(0) @db.Real
+  Transaction_Type String?   @map("Transaction Type")
+  Duration         String?
+  Block            Int?
+  Transaction_ID   String?   @map("Transaction ID")
+  Note             String?
+  Ownership        String?   @map("Ownership Type")
+  Index            Int?
+}
+
+model Counterparty {
+  id          Int      @id @unique @default(autoincrement())
+  cp_account  String?
+  entity_type String?
+  action      Boolean? @default(true)
+}
+
+enum DLedger {
+  Asset
+  Liability
+  Equity
+  Revenue
+  Expense
+}
+
+enum CLedger {
+  Asset
+  Liability
+  Equity
+  Revenue
+  Expense
+}
+
+enum Sale {
+  Buy
+  Sale
+}
