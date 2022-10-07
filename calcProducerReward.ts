@@ -1,45 +1,14 @@
 import { PrismaClient } from "@prisma/client";
 
-const prisma = new PrismaClient({
-  log: [
-    {
-      emit: "event",
-      level: "query",
-    },
-    {
-      emit: "stdout",
-      level: "error",
-    },
-    {
-      emit: "stdout",
-      level: "info",
-    },
-    {
-      emit: "stdout",
-      level: "warn",
-    },
-  ],
-});
+const prisma = new PrismaClient();
 
-// prisma.$on("query", (e) => {
-//   console.log("Query: " + e.query);
-//   console.log("Params: " + e.params);
-//   console.log("Duration: " + e.duration + "ms");
-// });
+async function producerReward() {
+  //find all the coding needed for every transaction type from the ledger table to apply it to the Accounting JE table where realized Gain/Loss does not need to be calculated
 
-// prisma.$on("query", (e) => {
-//   console.log("Query: " + e.query);
-//   console.log("Params: " + e.params);
-//   console.log("Duration: " + e.duration + "ms");
-// });
-
-async function Remaining_Recieved() {
-  // this function will run through any remaining tranfers that were not processed by the above script because they, for whatever reason, did not meet the permiters established there.  Therefore this function must run last in order to catch what remains
+  //tokens received is a seperate script to handle the tribe vs not tribe logic
 
   const findAllJeCoding = await prisma.ledger.findMany({
-    where: {
-      Transaction_Type: "RECEIVED",
-    },
+    where: { Realized: false, Transaction_Type: "PRODUCER_REWARD" },
     select: {
       id: true,
       Transaction_Type: true,
@@ -67,6 +36,7 @@ async function Remaining_Recieved() {
       distinct: ["id"],
       select: {
         id: true,
+        Account_Ownership: true,
         Asset_Type: true,
         Asset: true,
         Account: true,
@@ -79,24 +49,9 @@ async function Remaining_Recieved() {
         Net: true,
         Transaction_Type: true,
         Duration: true,
-        Account_Ownership: true,
-        accountingJE: true,
       },
       where: {
-        Transaction_Type: "RECEIVED",
-        NOT: {
-          Counterparty: {
-            in: [
-              "peakmonsters",
-              "steemmonsters",
-              "steem-mart",
-              "positive-trail",
-              "sm-fundition",
-              "patelincho",
-              "splinterlands",
-            ],
-          },
-        },
+        Transaction_Type: elementJeCoding?.Transaction_Type,
       },
 
       // if you want to do a test run uncomment the below line
@@ -163,12 +118,13 @@ async function Remaining_Recieved() {
     }
 
     // if you want to see your script running on a larger data set
+    console.log(elementJeCoding.Transaction_Type, " process completed");
   }
-
-  console.log("Remaining Recieved process completed");
 }
 
-Remaining_Recieved()
+////----end of  producerReward function---------------------------------------
+
+producerReward()
   .catch((e) => {
     console.error(e);
     process.exit(1);

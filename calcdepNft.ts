@@ -73,7 +73,7 @@ async function nftDisposal() {
       },
     },
     // if you want to do a test run uncomment the below line
-    take: 3,
+    // take: 3,
   });
 
   for (const createJELineElement of findNFTSellsTypes) {

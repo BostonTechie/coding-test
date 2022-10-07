@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { HiveFilter } from "./type";
+
 const prisma = new PrismaClient();
 
 async function calcServiceFeeTransfer() {
@@ -93,7 +93,7 @@ async function calcServiceFeeTransfer() {
         },
       },
       // if you want to do a test run uncomment the below line
-      take: 1,
+      // take: 1,
     });
 
     for (const createJELineElement of findTransactionsTypeForThisLoop) {
@@ -151,6 +151,8 @@ async function calcServiceFeeTransfer() {
       if (createJELineElement.Net === null || storeNet === 0) {
         /* the if (above) estential does nothing in the case that net (realized gain/ loss) is equal to zero or null. In either case You wouldn't want a script to process a journal entry.  It may be useful to have a log of nulls though for debuging */
       } else if (createJELineElement.Net < 0) {
+        createJELineElement.Net = Math.abs(createJELineElement.Net);
+
         const createAllDRealized = await prisma.accountingJE.create({
           data: {
             Entity: createJELineElement?.Account_Ownership,
@@ -346,7 +348,7 @@ async function calcContractorFeeTransfer() {
         },
       },
       // if you want to do a test run uncomment the below line
-      take: 3,
+      // take: 3,
     });
 
     for (const createJELineElement of findTransactionsTypeForThisLoop) {
@@ -518,7 +520,7 @@ async function Exchange_Transfers() {
         },
       },
       // if you want to do a test run uncomment the below line
-      take: 3,
+      // take: 3,
     });
 
     for (const createJELineElement of findTransactionsTypeForThisLoop) {
@@ -676,7 +678,7 @@ async function NFT_Transfers() {
       },
     },
     // if you want to do a test run uncomment the below line
-    take: 3,
+    // take: 3,
   });
 
   for (const createJELineElement of findTransactionsTypeForThisLoop) {
@@ -804,7 +806,7 @@ async function NFT_Received() {
       },
     },
     // if you want to do a test run uncomment the below line
-    take: 3,
+    // take: 3,
   });
 
   for (const createJELineElement of findTransactionsTypeForThisLoop) {
@@ -893,41 +895,41 @@ async function NFT_Received() {
 
 ////----end of NFT_Received function---------------------------------------
 
-// calcServiceFeeTransfer()
-//   .catch((e) => {
-//     console.error(e);
-//     process.exit(1);
-//   })
-//   .finally(() => {
-//     prisma.$disconnect;
-//   });
+calcServiceFeeTransfer()
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
+  .finally(() => {
+    prisma.$disconnect;
+  });
 
-// calcContractorFeeTransfer()
-//   .catch((e) => {
-//     console.error(e);
-//     process.exit(1);
-//   })
-//   .finally(() => {
-//     prisma.$disconnect;
-//   });
+calcContractorFeeTransfer()
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
+  .finally(() => {
+    prisma.$disconnect;
+  });
 
-// Exchange_Transfers()
-//   .catch((e) => {
-//     console.error(e);
-//     process.exit(1);
-//   })
-//   .finally(() => {
-//     prisma.$disconnect;
-//   });
+Exchange_Transfers()
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
+  .finally(() => {
+    prisma.$disconnect;
+  });
 
-// NFT_Transfers()
-//   .catch((e) => {
-//     console.error(e);
-//     process.exit(1);
-//   })
-//   .finally(() => {
-//     prisma.$disconnect;
-//   });
+NFT_Transfers()
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
+  .finally(() => {
+    prisma.$disconnect;
+  });
 
 NFT_Received()
   .catch((e) => {

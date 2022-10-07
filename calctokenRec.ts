@@ -141,7 +141,7 @@ async function tribe_tokens() {
       },
 
       // if you want to do a test run uncomment the below line
-      take: 1,
+      // take: 1,
     });
 
     for (const createJELineElement of findTransactionsTypeForThisLoop) {
@@ -353,7 +353,7 @@ async function notIN_tribe_tokens() {
       },
 
       // if you want to do a test run uncomment the below line
-      take: 5,
+      // take: 5,
     });
 
     for (const createJELineElement of findTransactionsTypeForThisLoop) {

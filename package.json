@@ -5,11 +5,15 @@
   "main": "index.js",
   "scripts": {
     "test": "nodemon test.ts",
+    "fixneg": "nodemon calcCorrectNeg.ts",
     "calcout": "nodemon rowsImpactbyJE.ts",
+    "calcprod": "nodemon calcProducerReward.ts",
     "calctoken": "nodemon calctokenRec.ts",
+    "calcreal": "nodemon calcReal.ts",
     "calcdep": "nodemon calcdepNFT.ts",
     "calctrans": "nodemon calcTransfers.ts",
-    "calctrans2": "nodemon calcTransfers2.ts"
+    "calctrans2": "nodemon calcTransfers2.ts",
+    "calctrans3": "nodemon calcTransfers3.ts"
  
   },
   "keywords": [],
