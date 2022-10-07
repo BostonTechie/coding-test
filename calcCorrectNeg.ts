@@ -288,7 +288,7 @@ async function ReplacePosDebit() {
     console.log("Transfer Service fee process completed");
   }
 }
-
+//
 // RemoveNegDebit()
 //   .catch((e) => {
 //     console.error(e);
