@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-/* The purpose of this script is to record 100% depreciation expense at the point in time that a new NFT asset is recieved in the blockchain, which assumes a NFT qualifies as a software asset within the USA tax code this code is designed to run after the depreciation script runs recording the other Je's needed !!!! MUST BE RUN AFTER CALCACC SCRIPT*/
+/* The purpose of this script is to record 100% depreciation expense at the point in time that a new NFT asset is recieved in the blockchain, which assumes a NFT qualifies as a software asset within the USA tax code this code is designed to run after the depreciation script runs recording the other Je's needed*/
 
 async function depreciation() {
   const findDeprecitionTransTypes = await prisma.accountingJE.findMany({
@@ -18,6 +18,8 @@ async function depreciation() {
         gt: 0,
       },
     },
+    // if you want to do a test run uncomment the below line
+    // take: 3,
   });
 
   for (const createJELineElement of findDeprecitionTransTypes) {
@@ -34,7 +36,7 @@ async function depreciation() {
         Duration: createJELineElement?.Duration,
         hive: {
           connect: {
-            id: createJELineElement?.id,
+            id: createJELineElement?.CryptoDBid,
           },
         },
       },
@@ -53,7 +55,7 @@ async function depreciation() {
         Duration: createJELineElement?.Duration,
         hive: {
           connect: {
-            id: createJELineElement?.id,
+            id: createJELineElement?.CryptoDBid,
           },
         },
       },
@@ -66,14 +68,17 @@ async function nftDisposal() {
     distinct: ["id"],
     where: {
       Ledger_Type1: {
-        in: ["Revenue"],
+        in: ["Asset"],
       },
       Ledger_Name: {
         in: ["NFT_SELL", "NFT_TRANSFER"],
       },
+      Credit: {
+        gt: 0,
+      },
     },
     // if you want to do a test run uncomment the below line
-    // take: 3,
+    //take: 3,
   });
 
   for (const createJELineElement of findNFTSellsTypes) {
@@ -87,11 +92,11 @@ async function nftDisposal() {
         Ledger_Type1: "Asset",
         Ledger_Type2: "Accumlated Deprecition - NFT",
         Ledger_Name: createJELineElement?.Ledger_Name,
-        Debit: createJELineElement?.Debit,
+        Debit: createJELineElement?.Credit,
         Duration: createJELineElement?.Duration,
         hive: {
           connect: {
-            id: createJELineElement?.id,
+            id: createJELineElement?.CryptoDBid,
           },
         },
       },
@@ -106,17 +111,16 @@ async function nftDisposal() {
         Ledger_Type1: "Asset",
         Ledger_Type2: "Illiquid",
         Ledger_Name: createJELineElement?.Ledger_Name,
-        Credit: createJELineElement?.Debit,
+        Credit: createJELineElement?.Credit,
         Duration: createJELineElement?.Duration,
         hive: {
           connect: {
-            id: createJELineElement?.id,
+            id: createJELineElement?.CryptoDBid,
           },
         },
       },
     });
   }
-  console.log("calcultion of deprication for NFT complete");
 }
 
 depreciation()
@@ -126,6 +130,7 @@ depreciation()
   })
   .finally(() => {
     prisma.$disconnect;
+    console.log("disconect");
   });
 
 nftDisposal()
@@ -135,4 +140,5 @@ nftDisposal()
   })
   .finally(() => {
     prisma.$disconnect;
+    console.log("disconect");
   });

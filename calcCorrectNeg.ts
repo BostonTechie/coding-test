@@ -288,6 +288,17 @@ async function ReplacePosDebit() {
     console.log("Transfer Service fee process completed");
   }
 }
+
+async function DeleteThis() {
+  const findNegs = await prisma.accountingJE.deleteMany({
+    where: {
+      Ledger_Name: {
+        in: ["NFT_ISSUED", "NFT_RECEIVED"],
+      },
+    },
+  });
+}
+
 //
 // RemoveNegDebit()
 //   .catch((e) => {
@@ -298,7 +309,7 @@ async function ReplacePosDebit() {
 //     prisma.$disconnect;
 //   });
 
-ReplacePosDebit()
+DeleteThis()
   .catch((e) => {
     console.error(e);
     process.exit(1);
@@ -306,3 +317,12 @@ ReplacePosDebit()
   .finally(() => {
     prisma.$disconnect;
   });
+
+//   ReplacePosDebit()
+//   .catch((e) => {
+//     console.error(e);
+//     process.exit(1);
+//   })
+//   .finally(() => {
+//     prisma.$disconnect;
+//   });
